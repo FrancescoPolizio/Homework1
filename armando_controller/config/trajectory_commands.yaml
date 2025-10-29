@@ -1,0 +1,25 @@
+arm_controller_node:
+  ros__parameters:
+    controller_type: "trajectory"
+    command_publish_period: 1.0  # Time between sending new goals
+    
+    trajectory_duration: 5.0    
+    
+    num_commands: 7
+    joints_per_command: 4
+    
+    position_commands_flat: [
+      0.0, 0.0, 0.0, 0.0,
+      
+      1.2, 0.5, 0.5, 0.0,
+      
+      1.2, 1.0, 1.2, 0.0,
+      
+      1.2, 0.5, 0.5, 0.0,
+      
+      -1.2, 0.5, 0.5, 0.0,
+      
+      -1.2, 1.0, 1.2, 0.0,
+      
+      -1.2, 0.5, 0.5, 0.0
+    ]

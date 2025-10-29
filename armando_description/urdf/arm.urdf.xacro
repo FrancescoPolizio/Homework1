@@ -1,0 +1,430 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="armando">
+
+  <xacro:include filename="$(find armando_description)/urdf/armando_hardware_interface.xacro"/>
+  <xacro:include filename="$(find armando_gazebo)/urdf/armando_camera.xacro" />
+
+  <gazebo>
+    <plugin filename="libgz_ros2_control-system.so" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+          <parameters>$(find armando_description)/config/controllers.yaml</parameters>
+    </plugin>
+  </gazebo>
+	
+
+  <material name="red">
+    <color rgba="1 0 0 1"/>
+  </material>
+
+
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://armando_description/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <material name="red"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size = "0.1 0.1 0.12"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </collision>
+    <inertial>
+      <mass value="0.1"/>
+      <inertia ixx="1.06682889e+08" ixy="0.0" ixz="0.0" iyy="9.92165844e+07" iyz="0.0" izz="1.26939175e+08"/>
+    </inertial>    
+  </link>
+
+  <xacro:armando_camera
+    link_name="camera_link"
+    joint_name="camera_joint"
+    parent_link="base_link"
+    xyz="0.05 0 0.1"
+    rpy="0 -1.57 0"
+  />
+
+  <joint name="base_1_2" type="fixed">
+    <parent link="base_link"/>
+    <child link="base_turn"/>
+    <origin xyz="-0.0011 -0.011 0.05"/>
+  </joint>
+
+  <link name="base_turn">
+    <visual>
+      <geometry>
+        <mesh filename="package://armando_description/meshes/base_turn.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <material name="red"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.06 0.06 0.01"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </collision>   
+    <inertial>
+      <mass value="0.1"/>
+      <inertia ixx="1.35223008e+07" ixy="0.0" ixz="0.0" iyy="8.13814925e+06" iyz="0.0" izz="2.14903814e+07"/>
+    </inertial>
+  </link>
+ 
+  <joint name="j0" type="revolute">
+    <parent link="base_turn"/>
+    <child link="base_turn_rot"/>
+    <origin xyz="-0.0 0.0155 0.013" rpy = "0 0 -1.57"/>
+    <axis xyz="0 0 1" />
+    <limit effort="300" velocity="0.1" lower="-2.57" upper="2.57"/>
+  </joint>
+
+  <link name="base_turn_rot">
+    <visual>
+      <geometry>
+        <mesh filename="package://armando_description/meshes/base_turn_table_rot.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="red"/>
+    </visual>
+    <collision>
+      <geometry>
+         <box size="0.06 0.06 0.03"/>
+        </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </collision>
+    
+    <inertial>
+      <mass value="0.1"/>
+      <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001"/>
+    </inertial>
+  </link>
+  
+  <joint name="base_turn_rot_dyn2" type="fixed">
+    <parent link="base_turn_rot"/>
+    <child link="dyn2"/>
+    <origin xyz="0 0 0.0385" rpy="0 1.57 1.57 "/>
+  </joint>
+
+  <link name="dyn2">
+    <visual>
+      <geometry>
+        <mesh filename="package://armando_description/meshes/dyn.stl" scale="0.01 0.01 0.01"/>
+      </geometry>
+      
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </visual>
+    <collision>
+      <geometry>
+          <box size="0.08 0.05 0.05"/>
+        </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </collision>
+     <inertial>
+      <mass value="0.1"/>
+      <inertia ixx="6.90013881e-05" ixy="0.0" ixz="0.0" iyy="1.24554875e-04" iyz="0.0" izz="1.04295793e-04"/>
+    </inertial>
+  </link>
+  
+  <joint name="j1" type="revolute">
+    <parent link="dyn2"/>
+    <child link="dyn2_r"/>
+    <origin xyz="0 0 0.0" rpy="0 0 0"/>
+    <axis xyz="0 0 1" />
+    <limit effort="300" velocity="0.1" lower="-3.14" upper="3.14"/>
+  </joint>
+  
+  <link name="dyn2_r">
+    
+  </link>
+
+  <joint name="dyn2_f4" type="fixed">
+    <parent link="dyn2_r"/>
+    <child link="f4"/>
+    <origin xyz="-0.047 0.0 -0.003" rpy="0 1.57 1.57"/>
+  </joint>
+
+  <link name="f4">
+    <visual>
+      <geometry>
+        <mesh filename="package://armando_description/meshes/f4_n_f3.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <material name="red"/>
+    </visual>
+    <collision>
+      <geometry>
+          <box size = "0.06 0.15 0.06"/>
+        </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </collision>
+     <inertial>
+      <mass value="0.1"/>
+      <inertia ixx="6.90013881e-05" ixy="0.0" ixz="0.0" iyy="1.24554875e-04" iyz="0.0" izz="1.04295793e-04"/>
+    </inertial>
+  </link>
+  
+  <joint name="d4_dyn3" type="fixed">
+    <parent link="f4"/>
+    <child link="dyn3"/>
+    <origin xyz="-0.004 0.0645 0 " rpy="-1.57 3.14 1.57"/>
+  </joint>
+  
+  <link name="dyn3">
+    <visual>
+      <geometry>
+        <mesh filename="package://armando_description/meshes/dyn.stl" scale="0.01 0.01 0.01"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </visual>
+    <collision>
+      <geometry>
+          <box size="0.08 0.05 0.05"/>
+        </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </collision>
+     <inertial>
+      <mass value="0.1"/>
+      <inertia ixx="6.90013881e-05" ixy="0.0" ixz="0.0" iyy="1.24554875e-04" iyz="0.0" izz="1.04295793e-04"/>
+    </inertial>
+  </link>
+  
+  <joint name="j2" type="revolute">
+    <parent link="dyn3"/>
+    <child link="dyn3_r"/>
+    <origin xyz="0 0 0.0" rpy="0 0 0"/>
+    <axis xyz="0 0 1" />
+    <limit effort="300" velocity="0.1" lower="-3.14" upper="3.14"/>
+  </joint>
+  
+ <link name="dyn3_r">
+
+  </link>
+  
+  <joint name="dyn3_f5" type="fixed">
+    <parent link="dyn3_r"/>
+    <child link="f5"/>
+    <origin xyz="-0.046 -0.0 -0.002" rpy="1.57 1.57 3.1415 "/>
+  </joint>
+
+  <link name="f5">
+    <visual>
+      <geometry>
+        <mesh filename="package://armando_description/meshes/f4_n_f3.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <material name="red"/>
+    </visual>
+    <collision>
+      <geometry>
+          <box size = "0.06 0.15 0.06"/>
+        </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </collision>
+    
+    <inertial>
+      <mass value="0.1"/>
+  <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001"/>    </inertial>
+  </link>
+  
+  <joint name="f5_dyn4" type="fixed">
+    <parent link="f5"/>
+    <child link="dyn4"/>
+    <origin xyz="-0.004 0.065 -0.0" rpy="-1.57 3.1415 1.57 "/>
+  </joint> 
+  
+  <link name="dyn4">
+    <visual>
+      <geometry>
+        <mesh filename="package://armando_description/meshes/dyn.stl" scale="0.01 0.01 0.01"/>
+      </geometry>
+      
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </visual>
+    <collision>
+      <geometry>
+          <box size="0.08 0.05 0.05"/>
+        </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </collision>
+    
+    <inertial>
+      <mass value="0.1"/>
+      <inertia ixx="6.90013881e-05" ixy="0.0" ixz="0.0" iyy="1.24554875e-04" iyz="0.0" izz="1.04295793e-04"/>
+    </inertial>
+  </link>
+  
+  <joint name="j3" type="revolute">
+    <parent link="dyn4"/>
+    <child link="dyn4_r"/>
+    <origin xyz="0 0 0.0" rpy="0 0 0"/>
+    <axis xyz="0 0 1" />
+    <limit effort="300" velocity="0.1" lower="-3.14" upper="3.14"/>
+  </joint>
+  
+  <link name="dyn4_r">
+    
+  </link>
+  
+  <joint name="f5_wrist" type="fixed">
+    <parent link="dyn4_r"/>
+    <child link="wrist"/>
+    <origin xyz="-0.017 -0.013 0.003" rpy="1.57 1.57 -1.57"/>
+  </joint>
+
+  <link name="wrist">
+    <visual>
+      <geometry>
+        <mesh filename="package://armando_description/meshes/wrist.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <material name="red"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size = "0.06 0.06 0.07"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </collision>
+    
+     <inertial>
+      <mass value="0.1"/>
+      <inertia ixx="6.90013881e-05" ixy="0.0" ixz="0.0" iyy="1.24554875e-04" iyz="0.0" izz="1.04295793e-04"/>
+    </inertial>
+  </link>
+  
+  <joint name="wrist_dyn5" type="fixed">
+    <parent link="wrist"/>
+    <child link="dyn5"/>
+    <origin xyz="0.0038 -0.013 0.0275" rpy="0 0 1.57"/>
+  </joint>
+
+    <link name="dyn5">
+    <visual>
+      <geometry>
+        <mesh filename="package://armando_description/meshes/dyn.stl" scale="0.01 0.01 0.01"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </visual>
+    <collision>
+      <geometry>
+          <box size="0.08 0.04 0.05"/>
+        </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </collision>
+    
+    <inertial>
+      <mass value="0.1"/>
+      <inertia ixx="6.90013881e-05" ixy="0.0" ixz="0.0" iyy="1.24554875e-04" iyz="0.0" izz="1.04295793e-04"/>
+    </inertial>
+  </link>
+ 
+  <joint name="dyn5_dyn5_r" type="fixed">
+    <parent link="dyn5"/>
+    <child link="dyn5_r"/>
+    <origin xyz="0 0 0.0" rpy="0 0 0"/>
+    <axis xyz="0 0 1" />
+    <limit effort="300" velocity="0.1" lower="-3.14" upper="3.14"/>
+  </joint>
+  
+  <link name="dyn5_r">
+    
+  </link>
+  
+  <joint name="wrist_rotate_dyn5" type="fixed">
+    <parent link="dyn5_r"/>
+    <child link="crawer_base"/>
+    <origin xyz="0.015 0 0.019" rpy="0 0 1.57"/>
+  </joint>
+    
+  <link name="crawer_base">
+    <visual>
+      <geometry>
+        <mesh filename="package://armando_description/meshes/the_crawer_base.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <material name="red"/>
+    </visual>
+    <collision>
+      <geometry>
+          <box size="0.05 0.05 0.01"/>
+        </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </collision>
+    
+    <inertial>
+      <mass value="0.1"/>
+      <inertia ixx="6.90013881e-05" ixy="0.0" ixz="0.0" iyy="1.24554875e-04" iyz="0.0" izz="1.04295793e-04"/>
+    </inertial>
+  </link>
+    
+  <joint name="crawer_base_crawer_left" type="fixed">
+    <parent link="crawer_base"/>
+    <child link="crawer_left"/>
+    <origin xyz="-0.03 0.015 0.01" rpy="0 -1.57 0"/>
+  </joint>
+  
+  <link name="crawer_left">
+    <visual>
+      <geometry>
+        <mesh filename="package://armando_description/meshes/the_crawer.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <material name="white">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+          <box size="0.1 0.04 0.053"/>
+        </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </collision>
+    
+    <inertial>
+      <mass value="0.1"/>
+      <inertia ixx="6.90013881e-05" ixy="0.0" ixz="0.0" iyy="1.24554875e-04" iyz="0.0" izz="1.04295793e-04"/>
+    </inertial>
+  </link>
+  
+  
+  <joint name="crawer_base_crawer_right" type="fixed">
+    <parent link="crawer_base"/>
+    <child link="crawer_right"/>
+    <origin xyz="0.03 0.015 0.01" rpy="3.1415 -1.57 0"/>
+  </joint>
+  
+  <link name="crawer_right">
+    <visual>
+      <geometry>
+        <mesh filename="package://armando_description/meshes/the_crawer.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <material name="white">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+          <box size="0.1 0.04 0.053"/>
+        </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </collision>
+    
+    <inertial>
+      <mass value="0.1"/>
+      <inertia ixx="6.90013881e-05" ixy="0.0" ixz="0.0" iyy="1.24554875e-04" iyz="0.0" izz="1.04295793e-04"/>
+    </inertial>
+  </link>
+
+  <ros2_control name="ArmandoSystem" type="system">
+    <hardware>
+      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+    </hardware>
+    
+     <!--Call the macro for each joint -->
+    <xacro:hardware_interface_for_joint joint_name="j0"/>
+    <xacro:hardware_interface_for_joint joint_name="j1"/>
+    <xacro:hardware_interface_for_joint joint_name="j2"/>
+    <xacro:hardware_interface_for_joint joint_name="j3"/>
+  </ros2_control>
+</robot>
